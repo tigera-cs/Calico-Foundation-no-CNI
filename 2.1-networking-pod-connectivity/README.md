@@ -1,8 +1,7 @@
 ## 2.1. Networking: Pod Connectivity
 
 This lab focuses on basic k8s networking from the POD perspectives.
-In this lab, you will:
-Examine what the network looks like from the perspecitve of a pod (the pod network namespace)
+In this lab, you will examine what the network looks like from the perspecitve of a pod (the pod network namespace)
 
 ### 2.1.0. Before you begin
 
