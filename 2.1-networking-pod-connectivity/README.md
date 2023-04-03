@@ -85,6 +85,11 @@ Note the fields:
 
 Next let's look more closely at the interfaces using `ip link`.
 
+Exec back into the pod
+```
+kubectl exec -it -n yaobank $(kubectl get pods -n yaobank -l app=customer -o name) -- bash
+```
+
 ```
 ip -c link
 ```
