@@ -197,7 +197,7 @@ blackhole 10.48.0.128/26 proto bird
 
 In this example output, we can see the route to the customer pod's IP (`10.48.0.133`) is via the `cali12a8cc48008` interface, the host end of the veth pair for the customer pod. You can see similar routes for each of the IPs of the other pods hosted on this node. It's these routes that tell Linux where to send traffic that is destined to a local pod on the node.
 
-We can also see several routes labelled `proto bird`. These are routes to pods on other nodes that Calico has learned over BGP. We will get deeper on BGP as the training progresses, but for now consider this route in the example output above `10.48.0.192/26 via 10.0.1.20 dev ens5 proto bird`.  It indicates pods with IP addresses falling within the `10.48.0.192/26` CIDR can be reached via `10.0.1.20` which is a different node.
+We can also see several routes labelled `proto bird`. These are routes to pods on other nodes that Calico has learned over BGP. Lets consider this route in the example output above `10.48.0.192/26 via 10.0.1.20 dev ens5 proto bird`.  It indicates pods with IP addresses falling within the `10.48.0.192/26` CIDR can be reached via `10.0.1.20` which is a different node.
 
 Calico uses route aggregation to reduce the number of routes when possible. (e.g. `/26` in this example). The `/26` corresponds to the default block size that Calico IPAM (IP Address Management) allocates on demand as nodes need pod IP addresses, and which is specified as the parameter `blockSize` in the pool we checked in step 2.1.1.3.
 
