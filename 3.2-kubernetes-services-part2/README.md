@@ -1,16 +1,16 @@
 ## 3.3. Kubernetes Service - Ingress
 
-This is the 3rd of a series of labs about k8s services. This lab exposes the Yaobank Customer service to the outside via ingress controller. In this lab, you will:
+This is the 2nd of a series of labs about k8s services. This lab exposes the Yaobank Customer service to the outside via ingress controller. In this lab, you will:
 
-3.3.1. Remove previous Yaobank deployment. \
-3.3.2. Deploy an ingress controller that listens to all namespaces. \
-3.3.3. Deploy an updated Yaobank manifest including ingress.
+3.2.1. Remove previous Yaobank deployment. \
+3.2.2. Deploy an ingress controller that listens to all namespaces. \
+3.2.3. Deploy an updated Yaobank manifest including ingress.
 
-### 3.3.0. Before you begin
+### 3.2.0. Before you begin
 
 This lab leverages the lab deployment we have developed so far, except for the yaobank application, so you must complete previous labs before continuing.
 
-### 3.3.1. Remove previous Yaobank deployment
+### 3.2.1. Remove previous Yaobank deployment
 
 In this lab, we will be exposing the Yaobank Customer service using a ingress controller. Let's start with removing the previous Yaobank deployment and proceed to deploying the new configuration. For simplicity, let's just remove the namespace which deletes all included objects (this could take a bit of time, please be patient, and wait for the prompt to return. If it does not come back in a couple of minutes, press "Enter" to make sure it has not finished already).
 
@@ -18,7 +18,7 @@ In this lab, we will be exposing the Yaobank Customer service using a ingress co
 kubectl delete ns yaobank
 ```
 
-### 3.3.2. Deploy an ingress controller that listens to all namespaces
+### 3.2.2. Deploy an ingress controller that listens to all namespaces
 
 Ingress is the built-in kubernetes framework for load-balancing http traffic. Cloud providers offer a similar functionality out of the box via cloud load-balancers. Ingress allows the manipulation of incoming http requests, natting/routing traffic to back-end services based on provided host/path or even passing-through traffic. It can effectively provide L7-based policies and typical load-balancing features such as stickiness, health probes or weight-based load-balancing.
 
@@ -75,7 +75,7 @@ Events:            <none>
 
 By default the ingress controller will listen to all namespaces, and service ingress objects created on them so it will programmed with the needed rules to forward our traffic. Currently we have not created any, so if we try to access our lab in port 443 using our browser (`https:labname.lynx.tigera.ca`), we will get a 404 error from our ingress controller.
 
-### 3.3.3. Deploy an updated Yaobank manifest including ingress
+### 3.2.3. Deploy an updated Yaobank manifest including ingress
 
 Let's check our modified yaobank application which includes an ingress resource:
 
@@ -133,6 +133,6 @@ database   ClusterIP   10.49.177.243   <none>        2379/TCP   11m
 summary    ClusterIP   10.49.180.235   <none>        80/TCP     11m
 ```
 
-### 3.3.3. Verify connectivity
+### 3.2.3. Verify connectivity
 
 Now if we access our lab in port 443 using our browser (`https://<LABNAME>.lynx.tigera.ca`), we must get a Welcome page from our application.
