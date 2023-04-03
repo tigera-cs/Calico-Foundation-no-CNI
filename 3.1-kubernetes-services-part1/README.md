@@ -204,11 +204,10 @@ sudo iptables -v --numeric --table nat --list KUBE-NODEPORTS
 ```
 Chain KUBE-NODEPORTS (1 references)
  pkts bytes target     prot opt in     out     source               destination
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */ tcp dpt:30180
     0     0 KUBE-SVC-PX5FENG4GZJTCELT  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */ tcp dpt:30180
 ```
 
-The second rule directs traffic destined for the `customer` service to the chain that load balances the service (KUBE-SVC-PX5FENG4GZJTCELT in the example above). `tcp dpt:30180` matches any packet with the destination port of tcp 30180 (the node port of the `customer` service).
+This rule directs traffic destined for the `customer` service to the chain that load balances the service (KUBE-SVC-PX5FENG4GZJTCELT in the example above). `tcp dpt:30180` matches any packet with the destination port of tcp 30180 (the node port of the `customer` service).
 
 #### 3.1.3.4. KUBE-SVC-XXXXXXXXXXXXXXXX -> KUBE-SEP-XXXXXXXXXXXXXXXX
 (Remember your chain name may be different than this example.)
@@ -219,6 +218,8 @@ sudo iptables -v --numeric --table nat --list KUBE-SVC-PX5FENG4GZJTCELT
 ```
 Chain KUBE-SVC-PX5FENG4GZJTCELT (2 references)
  pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.48.0.134         /* yaobank/customer:http cluster IP */ tcp dpt:80
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */ tcp dpt:30180
     0     0 KUBE-SEP-VX6ED4DV5PMQKJAE  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */
 ```
 
