@@ -77,7 +77,7 @@ echo $CALICO_VERSION
 Finally let's download the client, and make it executable:
 
 ```
-curl -o calicoctl -O -L $(echo https://github.com/projectcalico/calicoctl/releases/download/`echo $CALICO_VERSION`/calicoctl-linux-amd64 | tr -d '\r')
+curl -o calicoctl -O -L $(echo https://github.com/projectcalico/calico/releases/download/`echo $CALICO_VERSION`/calicoctl-linux-amd64 | tr -d '\r')
 ```
 ```
 chmod +x calicoctl
