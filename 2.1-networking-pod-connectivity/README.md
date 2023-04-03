@@ -54,7 +54,7 @@ ip addr
 ```
 
 * There is an `eth0` interface which has the pods actual IP address, (`10.48.0.133` in the example). Notice this matches the IP address that `kubectl get pods` returned earlier. The above output shows a tunnel interface, as in the case above IPIP is configured in the pool at the time of deployment, however in your lab, such interface will not be there as we did not set this parameter in the manifest "1-custom-resources.yaml" which we inspected in the previous lab.
-* We can check this by running the below calicoctl command from the bastion (you will need to exit out of this pod)
+We can check this by running the below calicoctl command from the bastion (you will need to exit out of this pod)
 
 ```
 calicoctl get ippool -o yaml
