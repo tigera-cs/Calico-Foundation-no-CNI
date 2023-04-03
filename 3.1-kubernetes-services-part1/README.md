@@ -8,7 +8,7 @@ In this lab, you will: \
 
 ### 3.1.0. Before you begin
 
-This lab builds on the setup of previous labs. If you haven't completed them, please go back and ensure that your cluster is setup with k8s CNI and that Yaobank application is deployed.
+This lab builds on the setup of previous labs. If you haven't completed them, please go back and ensure that your cluster is setup with k8s CNI and that Yaobank application is deployed. Also, please note the IP addresses in this guide may differ to the IP addresses you see in your lab
 
 ### 3.1.1. Examine kubernetes services
 
@@ -87,21 +87,13 @@ sudo iptables -v --numeric --table nat --list KUBE-SERVICES
 ```
 Chain KUBE-SERVICES (2 references)
  pkts bytes target     prot opt in     out     source               destination
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.213.58         /* yaobank/summary:http cluster IP */ tcp dpt:80
     0     0 KUBE-SVC-OIQIZJVJK6E34BR4  tcp  --  *      *       0.0.0.0/0            10.49.213.58         /* yaobank/summary:http cluster IP */ tcp dpt:80
-    0     0 KUBE-MARK-MASQ  udp  --  *      *      !10.48.0.0/16         10.49.0.10           /* kube-system/kube-dns:dns cluster IP */ udp dpt:53
     0     0 KUBE-SVC-TCOU7JCQXEZGVUNU  udp  --  *      *       0.0.0.0/0            10.49.0.10           /* kube-system/kube-dns:dns cluster IP */ udp dpt:53
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.0.10           /* kube-system/kube-dns:dns-tcp cluster IP */ tcp dpt:53
     0     0 KUBE-SVC-ERIFXISQEP7F7OF4  tcp  --  *      *       0.0.0.0/0            10.49.0.10           /* kube-system/kube-dns:dns-tcp cluster IP */ tcp dpt:53
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.198.194        /* calico-system/calico-typha:calico-typha cluster IP */ tcp dpt:5473
     0     0 KUBE-SVC-RK657RLKDNVNU64O  tcp  --  *      *       0.0.0.0/0            10.49.198.194        /* calico-system/calico-typha:calico-typha cluster IP */ ...
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.238.135        /* yaobank/database:http cluster IP */ tcp dpt:2379
     0     0 KUBE-SVC-AE2X4VPDA5SRYCA6  tcp  --  *      *       0.0.0.0/0            10.49.238.135        /* yaobank/database:http cluster IP */ tcp dpt:2379
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.50.18          /* yaobank/customer:http cluster IP */ tcp dpt:80
     0     0 KUBE-SVC-PX5FENG4GZJTCELT  tcp  --  *      *       0.0.0.0/0            10.49.50.18          /* yaobank/customer:http cluster IP */ tcp dpt:80
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.0.1            /* default/kubernetes:https cluster IP */ tcp dpt:443
     0     0 KUBE-SVC-NPX46M4PTMTKRN6Y  tcp  --  *      *       0.0.0.0/0            10.49.0.1            /* default/kubernetes:https cluster IP */ tcp dpt:443
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.0.10           /* kube-system/kube-dns:metrics cluster IP */ tcp dpt:9153
     0     0 KUBE-SVC-JD5MR3NA4I4DYORP  tcp  --  *      *       0.0.0.0/0            10.49.0.10           /* kube-system/kube-dns:metrics cluster IP */ tcp dpt:9153
   654 41144 KUBE-NODEPORTS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
 ```
@@ -121,7 +113,6 @@ Now let's look more closely at the rules for the `summary` service.
 sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep -E summary
 ```
 ```
-    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.213.58         /* yaobank/summary:http cluster IP */ tcp dpt:80
     0     0 KUBE-SVC-OIQIZJVJK6E34BR4  tcp  --  *      *       0.0.0.0/0            10.49.213.58         /* yaobank/summary:http cluster IP */ tcp dpt:80
 ```
 
@@ -139,13 +130,14 @@ sudo iptables -v --numeric --table nat --list KUBE-SVC-OIQIZJVJK6E34BR4
 ```
 Chain KUBE-SVC-OIQIZJVJK6E34BR4 (1 references)
  pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !10.48.0.0/16         10.49.213.58          /* yaobank/summary:http cluster IP */ tcp dpt:80 
     0     0 KUBE-SEP-3XJTYYRQCZK5MWPC  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/summary:http */ statistic mode random probability 0.50000000000
     0     0 KUBE-SEP-6ZQPIL5J2ULNLO5G  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/summary:http */
 ```
 
 Notice that `kube-proxy` is using the `iptables` `statistic` module to set the probability for a packet to be randomly matched.  Make sure you scroll all the way to the right to see the full output.
 
-The first rule directs traffic destined for the `summary` service to the chain that delivers packets to the first service endpoint (KUBE-SEP-3XJTYYRQCZK5MWPC) with a probability of 0.50000000000. The second rule unconditionally directs to the second service endpoint chain (KUBE-SEP-6ZQPIL5J2ULNLO5G). The result is that traffic is load balanced across the service endpoints equally (on average).
+The second rule directs traffic destined for the `summary` service to the chain that delivers packets to the first service endpoint (KUBE-SEP-3XJTYYRQCZK5MWPC) with a probability of 0.50000000000. The third rule unconditionally directs to the second service endpoint chain (KUBE-SEP-6ZQPIL5J2ULNLO5G). The result is that traffic is load balanced across the service endpoints equally (on average).
 
 If there were 3 service endpoints then the first chain matches would be probability 0.33333333, the second probability 0.5, and the last unconditional. The result is each service endpoint receives a third of the traffic (on average).
 
